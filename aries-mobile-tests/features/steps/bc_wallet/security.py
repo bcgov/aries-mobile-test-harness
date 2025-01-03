@@ -75,9 +75,16 @@ def step_enable_notifications(context):
 def step_impl(context):
     assert context.thisOnboardingBiometricsPage.on_this_page()
     assert context.thisOnboardingBiometricsPage.select_biometrics()
-    #context.thisInitializationPage = context.thisOnboardingBiometricsPage.select_continue()
+    
+    # Build 2084+ now has a system modal that needs to be accepted.
+    #assert context.thisOnboardingBiometricsPage.enable_biometrics_system_modal.on_this_page()
+    #context.thisOnboardingBiometricsPage.enable_biometrics_system_modal.select_allow()
+    # Until SauceLabs Case #00155429 is resolved, we need to authenticate with biomtrics. 
+    # 2 Lined above are commented out in the meantime,
+    context.device_service_handler.biometrics_authenticate(True)
+    
     context.thisEnableNotificationsPage = context.thisOnboardingBiometricsPage.select_continue()
-    # Not sure we need this next line since I don't think the app asks to authenticate when you select to use biometrics.
+
     # This is causing the test to fail when using a local android device so make this line conditional
     if "Local" not in os.environ['DEVICE_CLOUD']:
         context.device_service_handler.biometrics_authenticate(True)
